@@ -1,0 +1,25 @@
+Name: ftphs
+Version: 1.0.0
+License: LGPL
+Maintainer: John Goerzen <jgoerzen@complete.org>
+Stability: Stable
+Copyright: Copyright (c) 2004-2006 John Goerzen
+Hs-Source-Dirs: src
+Exposed-Modules: Network.FTP.Client,
+    Network.FTP.Client.Parser,
+    Network.FTP.Server,
+    Network.FTP.Server.Parser
+Extensions: ExistentialQuantification, OverlappingInstances, 
+   UndecidableInstances, CPP
+Build-Depends: network, parsec, base,
+               haskell98, mtl, HUnit, regex-compat, QuickCheck, FilePath,
+               hslogger
+-- Cabal will automatically add unix here on non-Windows platforms
+GHC-Options: -O2
+
+Executable: runtests
+Buildable: False
+Main-Is: runtests.hs
+HS-Source-Dirs: testsrc, .
+Extensions: ExistentialQuantification, OverlappingInstances,
+    UndecidableInstances, CPP
