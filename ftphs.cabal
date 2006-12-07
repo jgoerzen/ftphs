@@ -15,7 +15,7 @@ Extensions: ExistentialQuantification, OverlappingInstances,
    UndecidableInstances, CPP
 Build-Depends: network, parsec, base,
                haskell98, mtl, regex-compat, 
-               hslogger
+               hslogger, MissingH>=0.18.0
 GHC-Options: -O2
 
 Executable: runtests
