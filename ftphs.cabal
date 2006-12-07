@@ -4,6 +4,8 @@ License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Stability: Stable
 Copyright: Copyright (c) 2004-2006 John Goerzen
+Homepage: http://software.complete.org/ftphs
+Synopsis: FTP Client and Server Library
 Hs-Source-Dirs: src
 Exposed-Modules: Network.FTP.Client,
     Network.FTP.Client.Parser,
