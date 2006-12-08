@@ -1,3 +1,11 @@
+ftphs (1.0.0) unstable; urgency=low
+
+  * First ftphs release.  Closes: #401945.
+  * This package contains code that used to be part of MissingH and was
+    split off according to the MissingH transition plan.
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu,  7 Dec 2006 06:02:02 -0600
+
 missingh (0.18.0) unstable; urgency=low
 
   * Major API changes in this release; several large modules being
