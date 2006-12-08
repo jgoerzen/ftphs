@@ -12,7 +12,11 @@ You must satisfy one or more of these major categories:
 
 1. GHC 6.6 or above (including cpphs)
 
+  or
+
 2. Hugs 2005xx or above, plus cpphs
+
+And, all installations will need:
 
 3. MissingH
    Get it from http://software.complete.org/missingh
