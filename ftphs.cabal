@@ -8,6 +8,7 @@ Copyright: Copyright (c) 2004-2006 John Goerzen
 license-file: COPYRIGHT
 extra-source-files: COPYING
 Homepage: http://software.complete.org/ftphs
+Category: Network
 Synopsis: FTP Client and Server Library
 Description:  ftphs provides a Haskell library to implement a FTP client
  and a FTP server.

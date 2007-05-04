@@ -1,3 +1,10 @@
+ftphs (1.0.1) unstable; urgency=low
+
+  * Rebuilt against MissingH 0.18.4.  Closes: #422055.
+  * Added deps on new hugs packages.  Closes: #419391.
+
+ -- John Goerzen <jgoerzen@complete.org>  Thu, 03 May 2007 19:39:56 -0500
+
 ftphs (1.0.0) unstable; urgency=low
 
   * First ftphs release.  Closes: #401945.
