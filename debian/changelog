@@ -1,3 +1,9 @@
+ftphs (1.0.2) unstable; urgency=low
+
+  * Debian updated for new GHC.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 01 Jun 2007 04:33:50 -0500
+
 ftphs (1.0.1) unstable; urgency=low
 
   * Rebuilt against MissingH 0.18.4.  Closes: #422055.
