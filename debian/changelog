@@ -1,4 +1,4 @@
-ftphs (1.0.3) unstable; urgency=low
+ftphs (1.0.3) unstable; urgency=medium
 
   * Drop build-dep on hugs stuff
 
