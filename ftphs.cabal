@@ -1,5 +1,5 @@
 Name: ftphs
-Version: 1.0.3
+Version: 1.0.3.1
 License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
@@ -29,7 +29,7 @@ Extensions: ExistentialQuantification, OverlappingInstances,
    UndecidableInstances, CPP
 Build-Depends: network, parsec, base,
                haskell98, mtl, regex-compat, 
-               hslogger, MissingH>=0.18.0
+               hslogger, MissingH>=1.0.0
 GHC-Options: -O2
 
 Executable: runtests

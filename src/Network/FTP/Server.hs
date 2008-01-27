@@ -89,7 +89,7 @@ import System.IO.Error
 import System.Log.Logger
 import Network.Utils
 import Network.SocketServer
-import Data.String
+import Data.String.Utils
 import System.IO.HVIO
 import System.IO.HVFS
 import System.IO.HVFS.InstanceHelpers
