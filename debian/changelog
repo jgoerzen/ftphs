@@ -1,3 +1,9 @@
+ftphs (1.0.4.1) unstable; urgency=low
+
+  * Rebuild to grab newer regex deps.  Closes: #464530.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 29 Feb 2008 09:54:08 -0600
+
 ftphs (1.0.4.0) unstable; urgency=low
 
   * Build with GHC 6.8.x.
