@@ -1,3 +1,10 @@
+ftphs (1.0.4.3) unstable; urgency=low
+
+  * Note VCS-* and Homepage lines in control.
+  * Rebuild for newer MissingH.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 25 Apr 2008 11:39:25 -0500
+
 ftphs (1.0.4.2) unstable; urgency=low
 
   * Rebuild against hslogger 1.0.5.  Closes: #468914.
