@@ -249,7 +249,7 @@ respToSockAddr f =
 parseDirName :: FTPResult -> Maybe String
 parseDirName (257, name:_) =
     let procq [] = []
-        procq ['"'] = []
+        procq ('"':_) = []
         procq ('"' : '"' : xs) = '"' : procq xs
         procq (x:xs) = x : procq xs
         in       
