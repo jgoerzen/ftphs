@@ -231,7 +231,6 @@ import System.IO.Unsafe
 import System.Log.Logger
 import Network.Utils
 import Data.String.Utils
-import Data.IORef
 data FTPConnection = FTPConnection {readh :: IO String,
                                     writeh :: Handle,
                                     socket_internal :: Socket,
@@ -349,15 +348,11 @@ ntransfercmd h cmd =
                     addr <- makepasv h
                     s <- connectTCPAddr addr
                     r <- sendcmd h cmd
-		    r <- if isxresp 200 r then writeIORef preRet (Just r) >> return (150,[])
-		                          else return r
                     forceioresp 100 r
                     return s
                else do 
                     masterresult <- makeport h
                     r <- sendcmd h cmd
-		    r <- if isxresp 200 r then writeIORef preRet (Just r) >> return (150,[])
-		                          else return r
                     forceioresp 100 r
                     acceptres <- accept (fst masterresult)
                     sClose (fst masterresult)
@@ -394,20 +389,13 @@ storbinary h cmd input =
        hClose newh
        getresp h
 
-preRet :: IORef (Maybe FTPResult)
-preRet = unsafePerformIO $ newIORef Nothing
-
 {- | Retrieves lines of data from the remote. The string gives 
 the command to issue. -}
 retrlines :: FTPConnection -> String -> IO ([String], FTPResult)
 retrlines h cmd =
     -- foo returns the empty last item and closes the handle when done
     let foo theh [] = do hClose theh
-                         c <- readIORef preRet
-                         r <- case c of
-			           Nothing -> getresp h
-				   Just r  -> do writeIORef preRet Nothing
-				                 return r
+                         r <- getresp h
                          return ([], r)
         foo theh ("" : []) = foo theh []
         foo theh (x:xs) = do next <- unsafeInterleaveIO $ foo theh xs
