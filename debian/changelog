@@ -1,3 +1,10 @@
+ftphs (1.0.4.4) unstable; urgency=low
+
+  * Rebuild for newer MissingH.
+  * Introduce dh_haskell_depends.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 05 Dec 2008 15:26:43 -0600
+
 ftphs (1.0.4.3) unstable; urgency=low
 
   * Note VCS-* and Homepage lines in control.
