@@ -399,7 +399,6 @@ retrlines h cmd =
                          return ([], r)
         foo theh ("" : []) = foo theh []
         foo theh (x:xs) = do next <- unsafeInterleaveIO $ foo theh xs
-	                     ioFlush next
                              return $ (x : fst next, snd next)
         in do
               sendcmd h "TYPE A"
@@ -521,12 +520,3 @@ quit h = do
          hClose (writeh h)
          -- hClose (readh_internal h)
          return r
-
-class IOFlushable a where
-  ioFlush :: a -> IO ()
-
-instance IOFlushable [a] where
-  ioFlush x = putStr $ take (length x - length x) "dummy"
-
-instance IOFlushable a => IOFlushable (a,b) where
-  ioFlush x = ioFlush $ fst x
