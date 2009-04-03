@@ -1,3 +1,9 @@
+ftphs (1.0.5-1) unstable; urgency=low
+
+  * Rebuild for GHC 6.10.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 03 Apr 2009 15:50:26 -0500
+
 ftphs (1.0.4.6) unstable; urgency=high
 
   * Rebuilding for newer GHC.
