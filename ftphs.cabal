@@ -21,7 +21,7 @@ Description:  ftphs provides a Haskell library to implement a FTP client
   * Server can serve up a real or a virtual filesystem tree
   * Standards compliant
 
-Built-Type: Simple
+Build-Type: Simple
 Cabal-Version: >=1.2.3
 
 Flag buildtests
