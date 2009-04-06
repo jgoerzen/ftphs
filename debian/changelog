@@ -1,6 +1,7 @@
 ftphs (1.0.5-1) unstable; urgency=low
 
   * Rebuild for GHC 6.10.
+  * New test building infrastructure.
 
  -- John Goerzen <jgoerzen@complete.org>  Fri, 03 Apr 2009 15:50:26 -0500
 
