@@ -20,17 +20,6 @@ Description:  ftphs provides a Haskell library to implement a FTP client
   * Optional lazy interaction
   * Server can serve up a real or a virtual filesystem tree
   * Standards compliant
-Hs-Source-Dirs: src
-Exposed-Modules: Network.FTP.Client,
-    Network.FTP.Client.Parser,
-    Network.FTP.Server,
-    Network.FTP.Server.Parser
-Extensions: ExistentialQuantification, OverlappingInstances, 
-   UndecidableInstances, CPP
-Build-Depends: network, parsec, base,
-               haskell98, mtl, regex-compat, 
-               hslogger, MissingH>=1.0.0
-GHC-Options: -O2
 
 Built-Type: Simple
 Cabal-Version: >=1.2.3
@@ -39,13 +28,26 @@ Flag buildtests
   description: Build the executable to run unit tests
   default: False
 
+Library
+  Hs-Source-Dirs: src
+  Exposed-Modules: Network.FTP.Client,
+    Network.FTP.Client.Parser,
+    Network.FTP.Server,
+    Network.FTP.Server.Parser
+  Extensions: ExistentialQuantification, OverlappingInstances, 
+   UndecidableInstances, CPP
+  Build-Depends: network, parsec, base,
+               haskell98, mtl, regex-compat, 
+               hslogger, MissingH>=1.0.0
+  GHC-Options: -O2
 
-Executable: runtests
+Executable runtests
   if flag(buildtests)
     Buildable: True
+    Build-Depends: testpack, HUnit
   else
     Buildable: False
   Main-Is: runtests.hs
-  HS-Source-Dirs: testsrc, .
+  HS-Source-Dirs: testsrc, src, .
   Extensions: ExistentialQuantification, OverlappingInstances,
     UndecidableInstances, CPP
