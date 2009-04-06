@@ -32,9 +32,20 @@ Build-Depends: network, parsec, base,
                hslogger, MissingH>=1.0.0
 GHC-Options: -O2
 
+Built-Type: Simple
+Cabal-Version: >=1.2.3
+
+Flag buildtests
+  description: Build the executable to run unit tests
+  default: False
+
+
 Executable: runtests
-Buildable: False
-Main-Is: runtests.hs
-HS-Source-Dirs: testsrc, .
-Extensions: ExistentialQuantification, OverlappingInstances,
+  if flag(buildtests)
+    Buildable: True
+  else
+    Buildable: False
+  Main-Is: runtests.hs
+  HS-Source-Dirs: testsrc, .
+  Extensions: ExistentialQuantification, OverlappingInstances,
     UndecidableInstances, CPP
