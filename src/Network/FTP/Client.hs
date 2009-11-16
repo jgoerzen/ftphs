@@ -218,7 +218,7 @@ module Network.FTP.Client(-- * Establishing\/Removing connections
                                    -- * Low-level advanced commands
                                    FTPConnection,
                                    transfercmd, ntransfercmd,
-                                   retrlines, storlines
+                                   retrlines, storlines, sendcmd
                        )
 where
 import Network.FTP.Client.Parser
