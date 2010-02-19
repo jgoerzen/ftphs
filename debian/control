@@ -1,0 +1,59 @@
+Source: ftphs
+Priority: optional
+Maintainer: John Goerzen <jgoerzen@complete.org>
+Build-Depends: debhelper (>= 4.0.0), ghc6 (>= 6.10), haskell-devscripts (>= 0.6.15), cpphs, libghc6-network-dev, libghc6-mtl-dev, libghc6-missingh-dev (>= 1.0.3.2), libghc6-hslogger-dev (>= 1.0.7.2), libghc6-hunit-dev, libghc6-testpack-dev
+Build-Depends-Indep: debhelper (>= 4.0.0), haddock, haskell-devscripts (>= 0.6.15), ghc6 (>= 6.10), cpphs
+Standards-Version: 3.6.2
+Section: devel
+Homepage: http://software.complete.org/ftphs
+VCS-Git: git://git.complete.org/ftphs
+VCS-Browser: http://git.complete.org/ftphs
+
+Package: libghc6-ftphs-dev
+Section: devel
+Architecture: any
+Depends: ${haskell:Depends}, libghc6-network-dev, libghc6-hslogger-dev (>= 1.0.5), libghc6-missingh-dev (>= 1.0.1)
+Suggests: ftphs-doc
+Description: FTP Client and Server Library for Haskell, GHC package
+ ftphs provides a Haskell library to implement a FTP client
+ and a FTP server.
+ .
+ ftphs has a number of features:
+ .
+  * Easy to use operation
+  * Full support of text and binary transfers
+  * Optional lazy interaction
+  * Server can serve up a real or a virtual filesystem tree
+  * Standards compliant
+
+#Package: libhugs-ftphs
+#Section: devel
+#Architecture: all
+#Depends: ${haskell:Depends}, libhugs-hslogger, libhugs-hunit, libhugs-network, libhugs-missingh (>= 1.0.0)
+#Suggests: ftphs-doc
+#Description: FTP Client and Server Library for Haskell, Hugs package
+# ftphs provides a Haskell library to implement a FTP client
+# and a FTP server.
+# .
+# ftphs has a number of features:
+# .
+#  * Easy to use operation
+#  * Full support of text and binary transfers
+#  * Optional lazy interaction
+#  * Server can serve up a real or a virtual filesystem tree
+#  * Standards compliant
+
+Package: ftphs-doc
+Section: doc
+Architecture: all
+Description: FTP Client and Server Library for Haskell, documentation
+ ftphs provides a Haskell library to implement a FTP client
+ and a FTP server.
+ .
+ ftphs has a number of features:
+ .
+  * Easy to use operation
+  * Full support of text and binary transfers
+  * Optional lazy interaction
+  * Server can serve up a real or a virtual filesystem tree
+  * Standards compliant
