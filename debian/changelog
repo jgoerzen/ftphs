@@ -1,3 +1,9 @@
+ftphs (1.0.7-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 19 Feb 2010 10:17:41 -0600
+
 ftphs (1.0.6-1) unstable; urgency=low
 
   * New upstream release.
