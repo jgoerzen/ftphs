@@ -1,3 +1,12 @@
+ftphs (1.0.6-1) unstable; urgency=low
+
+  * New upstream release.
+  * Switching to Debian Haskell team maintenance.
+  * Rebuild for GHC 6.12.
+  * New haskell-devscripts build infrastructure.  Closes: #556841.
+
+ -- John Goerzen <jgoerzen@complete.org>  Fri, 19 Feb 2010 09:59:25 -0600
+
 ftphs (1.0.5-1) unstable; urgency=low
 
   * Rebuild for GHC 6.10.
