@@ -445,9 +445,9 @@ uploadbinary h fn = do input <- readBinaryFile fn
 
 {- | Downloads a file from remote and saves to disk in binary mode.  Note: filename is used for both local and remote. -}
 downloadbinary :: FTPConnection -> String -> IO FTPResult
-downloadbinary h fn = do r <- getbinary h fn
-                         writeBinaryFile fn (fst r)
-                         return (snd r)
+downloadbinary h fn = do (r0, r1) <- getbinary h fn
+                         writeBinaryFile fn r0
+                         return r1
 
 {- | Retrieves a list of files in the given directory. 
 
