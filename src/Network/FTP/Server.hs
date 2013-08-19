@@ -83,9 +83,9 @@ import Network.FTP.Server.Parser
 import Network.FTP.Client.Parser
 import Network.BSD
 import Network.Socket
-import qualified Network
+--import qualified Network
 import System.IO.Utils
-import System.IO.Error
+--import System.IO.Error
 import System.Log.Logger
 import Network.Utils
 import Network.SocketServer
@@ -98,7 +98,7 @@ import Text.Printf
 import Data.Char
 import Data.IORef
 import Data.List
-import Control.Exception (try, catch, IOException, finally)
+import Control.Exception (try, catch, finally, SomeException)
 import System.IO
 
 data DataType = ASCII | Binary
@@ -168,7 +168,7 @@ trapIOError :: FTPServer -> IO a -> (a -> IO Bool) -> IO Bool
 trapIOError h testAction remainingAction =
     do result <- try testAction
        case result of
-         Left (err::IOException) -> do sendReply h 550 (show err)
+         Left (err::SomeException) -> do sendReply h 550 (show err)
                                     return True
          Right result -> remainingAction result
 
@@ -211,7 +211,7 @@ commands =
 commandLoop :: FTPServer -> IO ()
 commandLoop h@(FTPServer fh _ _) =
     let errorhandler e = do noticeM logname
-                                    ("Closing due to error: " ++ (show (e::IOException)))
+                                    ("Closing due to error: " ++ (show (e::SomeException)))
                             hClose fh
                             return False
         in do continue <- (flip catch) errorhandler 
