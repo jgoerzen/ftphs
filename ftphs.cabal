@@ -12,16 +12,20 @@ extra-source-files: COPYING,
 Homepage: http://software.complete.org/ftphs
 Category: Network
 Synopsis: FTP Client and Server Library
-Description:  ftphs provides a Haskell library to implement a FTP client
+Description: ftphs provides a Haskell library to implement a FTP client
  and a FTP server.
  .
  ftphs has a number of features:
  .
-  * Easy to use operation
-  * Full support of text and binary transfers
-  * Optional lazy interaction
-  * Server can serve up a real or a virtual filesystem tree
-  * Standards compliant
+ * Easy to use operation.
+ .
+ * Full support of text and binary transfers.
+ .
+ * Optional lazy interaction.
+ .
+ * Server can serve up a real or a virtual filesystem tree.
+ .
+ * Standards compliant.
 
 Build-Type: Simple
 Cabal-Version: >=1.2.3
