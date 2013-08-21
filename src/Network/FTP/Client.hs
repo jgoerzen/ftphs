@@ -35,7 +35,7 @@ Welcome to the FTP module for Haskell.
 Here is a quick usage example to get you started.  This is a log of a real
 session with ghci: 
 
-(This would be similar in a "do" block.  You could also save it to a file and
+(This would be similar in a @do@ block.  You could also save it to a file and
 run that with Hugs.)
 
 > Prelude> :l Network.FTP.Client
