@@ -1,10 +1,10 @@
 Name: ftphs
-Version: 1.0.9
+Version: 1.0.9.1
 License: LGPL
 Maintainer: John Goerzen <jgoerzen@complete.org>
 Author: John Goerzen
 Stability: Stable
-Copyright: Copyright (c) 2004-2010 John Goerzen
+Copyright: Copyright (c) 2004-2013 John Goerzen
 license-file: COPYRIGHT
 extra-source-files: COPYING,
                     Makefile,
@@ -37,7 +37,7 @@ Library
     Network.FTP.Server,
     Network.FTP.Server.Parser
   Extensions: ExistentialQuantification, OverlappingInstances, 
-   UndecidableInstances, CPP
+   UndecidableInstances, CPP, ScopedTypeVariables
   Build-Depends: network, parsec, base >= 3 && < 5,
                  mtl, regex-compat, 
                hslogger, MissingH>=1.0.0

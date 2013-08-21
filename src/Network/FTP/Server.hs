@@ -169,7 +169,7 @@ trapIOError h testAction remainingAction =
     do result <- try testAction
        case result of
          Left (err::SomeException) -> do sendReply h 550 (show err)
-                                    return True
+                                         return True
          Right result -> remainingAction result
 
 forceLogin :: CommandHandler -> CommandHandler
