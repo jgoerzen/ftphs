@@ -437,22 +437,6 @@ cmd_stor h@(FTPServer _ fs state) args =
                                    )
                    )
 
-rtransmitString :: String -> FTPServer  -> Socket -> IO ()
-rtransmitString thestr (FTPServer _ _ state) sock =
-    let fixlines :: [String] -> [String]
-        fixlines x = map (\y -> y ++ "\r") x
-        copyit h =
-            hPutStr h $ unlines . fixlines . lines $ thestr
-        in
-        do writeh <- socketToHandle sock WriteMode
-           hSetBuffering writeh (BlockBuffering (Just 4096))
-           mode <- readIORef (datatype state)
-           case mode of
-              ASCII -> finally (copyit writeh)
-                               (hClose writeh)
-              Binary -> finally (hPutStr writeh thestr)
-                                (hClose writeh)
-
 rtransmitH :: HVFSOpenEncap -> FTPServer -> Socket -> IO ()
 rtransmitH fhencap h@(FTPServer _ _ state) sock =
     let go fh = do writeh <- socketToHandle sock WriteMode
@@ -500,7 +484,8 @@ genericTransmitHandle h dat =
 
 genericTransmitString :: FTPServer -> String -> IO Bool
 genericTransmitString h dat =
-    genericTransmit h dat rtransmitString
+    do buf <- newMemoryBuffer dat (\_->return ())
+       genericTransmit h (HVFSOpenEncap buf) rtransmitH
 
 
 help_retr = ("Retrieve a file", "")
