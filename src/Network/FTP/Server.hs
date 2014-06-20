@@ -418,7 +418,7 @@ cmd_stor h@(FTPServer _ fs state) args =
                       ASCII -> finally (hLineInteract readh fh datamap)
                                        (hClose readh)
                       Binary -> finally (do vSetBuffering fh (BlockBuffering (Just 4096))
-                                            hCopy readh fh
+                                            rtransmitBinary readh fh
                                         ) (hClose readh)
         in
         if length args < 1
