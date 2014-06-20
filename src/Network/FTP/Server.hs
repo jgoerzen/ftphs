@@ -100,6 +100,7 @@ import Data.IORef
 import Data.List
 import Control.Exception (try, catch, finally, SomeException)
 import System.IO
+import Foreign.Marshal.Alloc (allocaBytes)
 
 data DataType = ASCII | Binary
               deriving (Eq, Show)
@@ -453,12 +454,35 @@ rtransmitString thestr (FTPServer _ _ state) sock =
                                 (hClose writeh)
 
 rtransmitH :: HVFSOpenEncap -> FTPServer -> Socket -> IO ()
-rtransmitH fhencap h sock =
-    case fhencap of
+rtransmitH fhencap h@(FTPServer _ _ state) sock =
+    let go fh = do writeh <- socketToHandle sock WriteMode
+                   hSetBuffering writeh (BlockBuffering (Just 4096))
+                   mode <- readIORef (datatype state)
+                   case mode of
+                       ASCII -> rtransmitAscii fh writeh
+                       Binary -> rtransmitBinary fh writeh
+      in
+      case fhencap of
        HVFSOpenEncap fh ->
-        finally (do c <- vGetContents fh
-                    rtransmitString c h sock
-                ) (vClose fh)
+        finally (go fh) (vClose fh)
+
+rtransmitAscii :: (HVIO a, HVIO b) => a -> b -> IO ()
+rtransmitAscii src dst =
+    let fixlines :: [String] -> [String]
+        fixlines x = map (\y -> y ++ "\r") x
+        copyit h = vPutStr h . unlines . fixlines . lines
+      in
+      vGetContents src >>= \s -> copyit dst s `finally` vClose dst
+
+rtransmitBinary :: (HVIO a, HVIO b) => a -> b -> IO ()
+rtransmitBinary src dst =
+    let bufSize = 4096
+        go buf src dst = do n <- vGetBuf src buf bufSize
+                            case n of
+                                0 -> return ()
+                                n' -> vPutBuf dst buf n' >> go buf src dst
+      in
+      allocaBytes bufSize $ \buf -> go buf src dst `finally` vClose dst
 
 genericTransmit :: FTPServer -> a -> (a -> FTPServer -> Socket -> IO ()) -> IO Bool
 genericTransmit h dat func =
