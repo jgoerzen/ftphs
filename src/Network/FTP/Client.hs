@@ -207,7 +207,7 @@ module Network.FTP.Client(-- * Establishing\/Removing connections
                                    nlst, dir, 
                                    -- * File downloads
                                    getlines, getbinary,
-                                   downloadbinary,
+                                   downloadbinary, downloadlargebinary,
                                    -- * File uploads
                                    putlines, putbinary,
                                    uploadbinary,
@@ -231,6 +231,7 @@ import System.IO.Unsafe
 import System.Log.Logger
 import Network.Utils
 import Data.String.Utils
+import Data.ByteString (hGet, hPut)
 data FTPConnection = FTPConnection {readh :: IO String,
                                     writeh :: Handle,
                                     socket_internal :: Socket,
@@ -448,6 +449,30 @@ downloadbinary :: FTPConnection -> String -> IO FTPResult
 downloadbinary h fn = do (r0, r1) <- getbinary h fn
                          writeBinaryFile fn r0
                          return r1
+
+{- | Similar to downloadbinary, but downloads the file in blocks of 4096 bytes
+so that memory usage is limited when downloading large files.
+Uses Data.ByteString's hGet to read data from the socket and hPut to write data
+to the file, since it is more space and time efficient than String. -}
+downloadlargebinary :: FTPConnection -> FilePath -> IO FTPResult
+downloadlargebinary h fn = do
+  ftp_data_h <- transfercmd h $ "RETR " ++ fn
+  out_file_fh <- openFile fn WriteMode
+  getAndWrite ftp_data_h out_file_fh
+  getresp h
+  where
+    getAndWrite ftp_data_h out_file_fh = do
+      eof_p <- hIsEOF ftp_data_h
+      case eof_p of
+        True -> do
+          hClose ftp_data_h
+          hFlush out_file_fh
+          hClose out_file_fh
+          return ()
+        False -> do
+          buf <- hGet ftp_data_h 4096
+          hPut out_file_fh buf
+          getAndWrite ftp_data_h out_file_fh
 
 {- | Retrieves a list of files in the given directory. 
 

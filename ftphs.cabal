@@ -44,7 +44,7 @@ Library
    UndecidableInstances, CPP, ScopedTypeVariables
   Build-Depends: network, parsec, base >= 3 && < 5,
                  mtl, regex-compat, 
-               hslogger, MissingH>=1.0.0
+               hslogger, MissingH>=1.0.0, bytestring
   GHC-Options: -O2
 
 Executable runtests
