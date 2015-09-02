@@ -50,7 +50,7 @@ Library
 Executable runtests
   if flag(buildtests)
     Buildable: True
-    Build-Depends: testpack, HUnit
+    Build-Depends: HUnit
   else
     Buildable: False
   Main-Is: runtests.hs
