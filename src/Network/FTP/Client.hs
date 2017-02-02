@@ -200,7 +200,7 @@ Useful standards:
 
 module Network.FTP.Client(-- * Establishing\/Removing connections
                                    easyConnectFTP, connectFTP,
-                                   loginAnon, login, quit, 
+                                   loginAnon, login, quit, getPassword, 
                                    -- * Configuration
                                    setPassive, isPassive, enableFTPDebugging,
                                    -- * Directory listing
@@ -545,3 +545,16 @@ quit h = do
          hClose (writeh h)
          -- hClose (readh_internal h)
          return r
+         
+-- | For using in getPassword function.          
+withEcho :: Bool -> IO a -> IO a
+withEcho echo action = do
+  old <- hGetEcho stdin
+  bracket_ (hSetEcho stdin echo) (hSetEcho stdin old) action  
+
+-- | Getting password for more safe login.
+getPassword :: IO String
+getPassword = do
+  putStr "Password: "
+  hFlush stdout
+  pass <- withEcho False getLine         
