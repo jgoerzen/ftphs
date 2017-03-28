@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    Copyright  : Copyright (C) 2004-2005 John Goerzen
    License    : GNU LGPL, version 2.1 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : experimental
    Portability: systems with networking
 
@@ -33,7 +33,7 @@ Written by John Goerzen, jgoerzen\@complete.org
 Welcome to the FTP module for Haskell.
 
 Here is a quick usage example to get you started.  This is a log of a real
-session with ghci: 
+session with ghci:
 
 (This would be similar in a @do@ block.  You could also save it to a file and
 run that with Hugs.)
@@ -102,7 +102,7 @@ of a string representing the data and a 'FTPResult' code.
 > -----BEGIN PGP SIGNATURE-----
 > Version: GnuPG v1.0.0 (GNU/Linux)
 > Comment: See http://www.kernel.org/signature.html for info
-> 
+>
 > iD8DBQA54rf0yGugalF9Dw4RAqelAJ9lafFni4f/QyJ2IqDXzW2nz/ZIogCfRPtg
 > uYpWffOhkyByfhUt8Lcelec=
 > =KnLA
@@ -200,11 +200,11 @@ Useful standards:
 
 module Network.FTP.Client(-- * Establishing\/Removing connections
                                    easyConnectFTP, connectFTP,
-                                   loginAnon, login, quit, 
+                                   loginAnon, login, quit,
                                    -- * Configuration
                                    setPassive, isPassive, enableFTPDebugging,
                                    -- * Directory listing
-                                   nlst, dir, 
+                                   nlst, dir,
                                    -- * File downloads
                                    getlines, getbinary,
                                    downloadbinary, downloadlargebinary,
@@ -214,28 +214,28 @@ module Network.FTP.Client(-- * Establishing\/Removing connections
                                    -- * File manipulation
                                    rename, delete, size,
                                    -- * Directory manipulation
-                                   cwd, mkdir, rmdir, pwd, 
+                                   cwd, mkdir, rmdir, pwd,
                                    -- * Low-level advanced commands
                                    FTPConnection,
                                    transfercmd, ntransfercmd,
                                    retrlines, storlines, sendcmd
                        )
 where
-import Network.FTP.Client.Parser
-import Network.BSD
-import Network.Socket
-import System.IO.Binary
+import           Data.ByteString           (hGet, hPut)
+import           Data.String.Utils
 import qualified Network
-import System.IO
-import System.IO.Unsafe
-import System.Log.Logger
-import Network.Utils
-import Data.String.Utils
-import Data.ByteString (hGet, hPut)
-data FTPConnection = FTPConnection {readh :: IO String,
-                                    writeh :: Handle,
+import           Network.BSD
+import           Network.FTP.Client.Parser
+import           Network.Socket
+import           Network.Utils
+import           System.IO
+import           System.IO.Binary
+import           System.IO.Unsafe
+import           System.Log.Logger
+data FTPConnection = FTPConnection {readh           :: IO String,
+                                    writeh          :: Handle,
                                     socket_internal :: Socket,
-                                    isPassive :: Bool}
+                                    isPassive       :: Bool}
 
 getresp h = do
             c <- (readh h)
@@ -262,7 +262,7 @@ full protocol dumps will be sent to stderr.
 The effect is global and persists until changed.
 -}
 enableFTPDebugging :: IO ()
-enableFTPDebugging = 
+enableFTPDebugging =
     do
     updateGlobalLogger "Network.FTP.Client.Parser" (setLevel DEBUG)
     updateGlobalLogger "Network.FTP.Client" (setLevel DEBUG)
@@ -280,7 +280,7 @@ connectFTP h p =
     s <- connectTCP h p
     newh <- socketToHandle s ReadWriteMode
     hSetBuffering newh LineBuffering
-    let h = FTPConnection {readh = readchars newh, 
+    let h = FTPConnection {readh = readchars newh,
                            socket_internal = s,
                            writeh = newh, isPassive = True}
     resp <- getresp h
@@ -315,7 +315,7 @@ login h user pass acct =
 
 {- | Sets whether passive mode is used (returns new
 connection object reflecting this) -}
-setPassive :: FTPConnection -> Bool -> FTPConnection            
+setPassive :: FTPConnection -> Bool -> FTPConnection
 setPassive f b = f{isPassive = b}
 
 {- | Finds the addres sof the remote. -}
@@ -338,7 +338,7 @@ makeport h =
            result <- sendcmd h ("PORT " ++ ps)
            return (mastersock, result)
 
-{- | Establishes a connection to the remote. 
+{- | Establishes a connection to the remote.
 
 FIXME: need support for rest
 -}
@@ -351,7 +351,7 @@ ntransfercmd h cmd =
                     r <- sendcmd h cmd
                     forceioresp 100 r
                     return s
-               else do 
+               else do
                     masterresult <- makeport h
                     r <- sendcmd h cmd
                     forceioresp 100 r
@@ -390,7 +390,7 @@ storbinary h cmd input =
        hClose newh
        getresp h
 
-{- | Retrieves lines of data from the remote. The string gives 
+{- | Retrieves lines of data from the remote. The string gives
 the command to issue. -}
 retrlines :: FTPConnection -> String -> IO ([String], FTPResult)
 retrlines h cmd =
@@ -433,11 +433,11 @@ getbinary h fn = retrbinary h ("RETR " ++ fn)
 {- | Puts data in the specified file in text mode.  The first string
 is the filename. -}
 putlines :: FTPConnection -> String -> [String] -> IO FTPResult
-putlines h fn input = storlines h ("STOR " ++ fn) input 
+putlines h fn input = storlines h ("STOR " ++ fn) input
 
 {- | Puts data in the specified file in binary.  The first string is the filename. -}
 putbinary :: FTPConnection -> String -> String -> IO FTPResult
-putbinary h fn input = storbinary h ("STOR " ++ fn) input 
+putbinary h fn input = storbinary h ("STOR " ++ fn) input
 
 {- | Uploads a file from disk in binary mode. Note: filename is used for both local and remote. -}
 uploadbinary :: FTPConnection -> String -> IO FTPResult
@@ -474,13 +474,13 @@ downloadlargebinary h fn = do
           hPut out_file_fh buf
           getAndWrite ftp_data_h out_file_fh
 
-{- | Retrieves a list of files in the given directory. 
+{- | Retrieves a list of files in the given directory.
 
 FIXME: should this take a list of dirs? -}
 nlst :: FTPConnection
         -> Maybe String                 -- ^ The directory to list.  If Nothing, list the current directory.
         -> IO [String]
-nlst h Nothing = retrlines h "NLST" >>= return . fst
+nlst h Nothing        = retrlines h "NLST" >>= return . fst
 nlst h (Just dirname) = retrlines h ("NLST " ++ dirname) >>= return . fst
 
 {- | Retrieve the system-specific long form of a directory list.
@@ -489,7 +489,7 @@ FIXME: should this take a list of dirs? -}
 dir :: FTPConnection
        -> Maybe String                  -- ^ The directory to list.  If Nothing, list the current directory.
        -> IO [String]
-dir h Nothing = retrlines h "LIST" >>= return .  fst
+dir h Nothing        = retrlines h "LIST" >>= return .  fst
 dir h (Just dirname) = retrlines h ("LIST " ++ dirname) >>= return . fst
 
 {- | Rename or move a file. -}
@@ -508,8 +508,8 @@ delete h fn = sendcmd h ("DELE " ++ fn)
 
 {- | Change the working directory. -}
 cwd :: FTPConnection -> String -> IO FTPResult
-cwd h ".." = sendcmd h "CDUP"
-cwd h "" = cwd h "."
+cwd h ".."   = sendcmd h "CDUP"
+cwd h ""     = cwd h "."
 cwd h newdir = sendcmd h ("CWD " ++ newdir)
 
 {- | Get the size of a file.

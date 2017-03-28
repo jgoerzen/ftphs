@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU LGPL, version 2.1 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : experimental
    Portability: systems with networking
 
@@ -43,7 +43,7 @@ as a filesystem.  It does this by using the
 "System.IO.HVFS" and "System.IO.HVIO" modules.
 
 In addition, basic networking and multitasking configuration is handled
-via "Network.SocketServer" and logging via 
+via "Network.SocketServer" and logging via
 "System.Log.Logger".
 
 This module is believed to be secure, but it not believed to be robust enough
@@ -103,7 +103,7 @@ import System.IO
 
 data DataType = ASCII | Binary
               deriving (Eq, Show)
-data AuthState = NoAuth 
+data AuthState = NoAuth
               | User String
               | Authenticated String
                 deriving (Eq, Show)
@@ -135,10 +135,10 @@ sendReply h codei text =
         writethis [item] = ftpPutStrLn h (codes ++ " " ++ item)
         writethis (item:xs) = do ftpPutStrLn h (codes ++ "-" ++ item)
                                  writethis xs
-        in 
+        in
         writethis (map (rstrip) (lines text))
 
-{- | Main FTP handler; pass the result of applying this to one argument to 
+{- | Main FTP handler; pass the result of applying this to one argument to
 'Network.SocketServer.handleHandler' -}
 
 anonFtpHandler :: forall a. HVFSOpenable a => a -> Handle -> SockAddr -> SockAddr -> IO ()
@@ -175,7 +175,7 @@ trapIOError h testAction remainingAction =
 forceLogin :: CommandHandler -> CommandHandler
 forceLogin func h@(FTPServer _ _ state) args =
     do state <- readIORef (auth state)
-       case state of 
+       case state of
           Authenticated _ -> func h args
           x -> do sendReply h 530 "Command not possible in non-authenticated state."
                   return True
@@ -214,13 +214,13 @@ commandLoop h@(FTPServer fh _ _) =
                                     ("Closing due to error: " ++ (show (e::SomeException)))
                             hClose fh
                             return False
-        in do continue <- (flip catch) errorhandler 
+        in do continue <- (flip catch) errorhandler
                (do x <- parseCommand fh
                    case x of
                      Left err -> do sendReply h 500 $
                                       " Couldn't parse command: " ++ (show err)
                                     return True
-                     Right (cmd, args) -> 
+                     Right (cmd, args) ->
                          case lookupC cmd commands of
                             Nothing -> do sendReply h 502 $
                                            "Unrecognized command " ++ cmd
@@ -244,7 +244,7 @@ cmd_quit h args =
 
 help_user =
     ("Provide a username",
-     unlines $ 
+     unlines $
      ["USER username will provide the username for authentication."
      ,"It should be followed by a PASS command to finish the authentication."
      ])
@@ -268,7 +268,7 @@ cmd_pass :: CommandHandler
 cmd_pass h@(FTPServer _ _ state) passedargs =
     do curstate <- readIORef (auth state)
        case curstate of
-         User "anonymous" -> 
+         User "anonymous" ->
              do sendReply h 230 "Anonymous login successful."
                 writeIORef (auth state) (Authenticated "anonymous")
                 infoM logname "Anonymous authentication successful"
@@ -291,7 +291,7 @@ cmd_cwd h@(FTPServer _ fs _) args =
                  sendReply h 250 $ "New directory now " ++ newdir
                  return True
 
-help_cdup = 
+help_cdup =
     ("Change to parent directory", "Same as CWD ..")
 cmd_cdup h _ = cmd_cwd h ".."
 
@@ -322,16 +322,16 @@ closeconn h@(FTPServer _ _ state) =
 help_port = ("Initiate a port-mode connection", "")
 cmd_port :: CommandHandler
 cmd_port h@(FTPServer _ _ state) args =
-    let doIt clientsa = 
+    let doIt clientsa =
             do writeIORef (datachan state) (PortMode clientsa)
                str <- showSockAddr clientsa
                sendReply h 200 $ "OK, later I will connect to " ++ str
                return True
         in
         do closeconn h                      -- Close any existing connection
-           trapIOError h (fromPortString args) $  (\clientsa -> 
+           trapIOError h (fromPortString args) $  (\clientsa ->
                case clientsa of
-                   SockAddrInet _ ha -> 
+                   SockAddrInet _ ha ->
                       case (local state) of
                           SockAddrInet _ ha2 -> if ha /= ha2
                                                   then do sendReply h 501 "Will only connect to same client as command channel."
@@ -361,10 +361,10 @@ help_pasv = ("Initiate a passive-mode connection", "")
 cmd_pasv :: CommandHandler
 cmd_pasv h@(FTPServer _ _ state) args =
     do closeconn h                      -- Close any existing connection
-       addr <- case (local state) of 
+       addr <- case (local state) of
                     (SockAddrInet _ ha) -> return ha
                     _ -> fail "Require IPv4 sockets"
-       let ssopts = InetServerOptions 
+       let ssopts = InetServerOptions
                     { listenQueueSize = 1,
                       portNumber = aNY_PORT,
                       interface = addr,
@@ -379,9 +379,9 @@ cmd_pasv h@(FTPServer _ _ state) args =
        sendReply h 227 $ "Entering passive mode (" ++ portstring ++ ")"
        writeIORef (datachan state) (PassiveMode ss)
        return True
-                 
-                                        
-       
+
+
+
 help_noop = ("Do nothing", "")
 cmd_noop :: CommandHandler
 cmd_noop h _ =
@@ -390,7 +390,7 @@ cmd_noop h _ =
 
 help_rnfr = ("Specify FROM name for a file rename", "")
 cmd_rnfr :: CommandHandler
-cmd_rnfr h@(FTPServer _ _ state) args = 
+cmd_rnfr h@(FTPServer _ _ state) args =
     if length args < 1
        then do sendReply h 501 "Filename required"
                return True
@@ -423,7 +423,7 @@ cmd_stor h@(FTPServer _ fs state) args =
         if length args < 1
            then do sendReply h 501 "Filename required"
                    return True
-           else trapIOError h (vOpen fs args WriteMode) 
+           else trapIOError h (vOpen fs args WriteMode)
                   (\fhencap ->
                     trapIOError h (do sendReply h 150 "File OK; about to open data channel"
                                       runDataChan h (runit fhencap)
@@ -462,7 +462,7 @@ rtransmitH fhencap h sock =
 
 genericTransmit :: FTPServer -> a -> (a -> FTPServer -> Socket -> IO ()) -> IO Bool
 genericTransmit h dat func =
-    trapIOError h 
+    trapIOError h
       (do sendReply h 150 "I'm going to open the data channel now."
           runDataChan h (func dat)
       ) (\_ ->
@@ -485,7 +485,7 @@ cmd_retr h@(FTPServer _ fs state) args =
         if length args < 1
            then do sendReply h 501 "Filename required"
                    return True
-           else trapIOError h (vOpen fs args ReadMode) 
+           else trapIOError h (vOpen fs args ReadMode)
                     (\fhencap -> genericTransmitHandle h fhencap)
 
 help_rnto = ("Specify TO name for a file name", "")
@@ -498,11 +498,11 @@ cmd_rnto h@(FTPServer _ fs state) args =
                case fr of
                    Nothing -> do sendReply h 503 "RNFR required before RNTO"
                                  return True
-                   Just fromname -> 
+                   Just fromname ->
                        do writeIORef (rename state) Nothing
                           trapIOError h (vRenameFile fs fromname args)
-                              $ \_ -> do sendReply h 250 
-                                           ("File " ++ fromname ++ 
+                              $ \_ -> do sendReply h 250
+                                           ("File " ++ fromname ++
                                             " renamed to " ++ args)
                                          return True
 
@@ -608,7 +608,7 @@ cmd_stat h@(FTPServer _ _ state) _ =
          ,"Auth Status         : " ++ (show auth)
          ,"End of status."]
        return True
-          
+
 
 help_help =
     ("Display help on available commands",
@@ -640,13 +640,13 @@ cmd_help h@(FTPServer _ _ state) args =
                    return True
            else let newargs = map toUpper args
                     in case lookupC newargs commands of
-                         Nothing -> do 
+                         Nothing -> do
                                     sendReply h 214 $ "No help for \"" ++ newargs
                                       ++ "\" is available.\nPlese send HELP"
                                       ++ " without arguments for a list of\n"
                                       ++ "valid commands."
                                     return True
                          Just (Command _ (_, (summary, detail))) ->
-                             do sendReply h 214 $ newargs ++ ": " ++ summary ++ 
+                             do sendReply h 214 $ newargs ++ ": " ++ summary ++
                                                "\n\n" ++ detail
                                 return True

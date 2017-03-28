@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU LGPL, version 2.1 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: systems with networking
 
@@ -65,10 +65,10 @@ word = many1 alpha
 args :: Parser String
 args = try (do char ' '
                r <- many anyChar
-               eof 
+               eof
                return r)
        <|> return ""
-       
+
 
 command :: Parser (String, String)
 command = do
