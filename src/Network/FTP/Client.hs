@@ -221,6 +221,7 @@ module Network.FTP.Client(-- * Establishing\/Removing connections
                                    retrlines, storlines, sendcmd
                        )
 where
+import           Control.Exception
 import           Data.ByteString           (hGet, hPut)
 import           Data.String.Utils
 import qualified Network
@@ -348,9 +349,15 @@ ntransfercmd h cmd =
                then do
                     addr <- makepasv h
                     s <- connectTCPAddr addr
-                    r <- sendcmd h cmd
-                    forceioresp 100 r
-                    return s
+                    catch
+                      (do
+                        r <- sendcmd h cmd
+                        forceioresp 100 r
+                        return s)
+                      ((\exc -> do
+                        sClose s
+                        throw exc
+                      ) :: IOError -> IO Socket)
                else do
                     masterresult <- makeport h
                     r <- sendcmd h cmd
