@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
    Copyright  : Copyright (C) 2004 John Goerzen
    License    : GNU LGPL, version 2.1 or above
 
-   Maintainer : John Goerzen <jgoerzen@complete.org> 
+   Maintainer : John Goerzen <jgoerzen@complete.org>
    Stability  : provisional
    Portability: systems with networking
 
@@ -137,7 +137,7 @@ startOfMultiReply = do
 
 multiReplyComponent :: Parser [String]
 multiReplyComponent = (try (do
-                            notMatching (do 
+                            notMatching (do
                                          codeString
                                          sp
                                         ) "found unexpected code"
@@ -190,9 +190,9 @@ debugParseGoodReply contents =
     let logPlugin :: String -> String -> IO String
         logPlugin [] [] = return []
         logPlugin [] accum = do
-                             logit accum 
+                             logit accum
                              return []
-        logPlugin (x:xs) accum = 
+        logPlugin (x:xs) accum =
             case x of
                    '\n' -> do logit (strip (accum))
                               next <- unsafeInterleaveIO $ logPlugin xs []
@@ -217,9 +217,9 @@ toPortString (SockAddrInet port hostaddr) =
     let wport = (fromIntegral (port))::Word16
         in do
            hn <- inet_ntoa hostaddr
-           return ((replace "." "," hn) ++ "," ++ 
+           return ((replace "." "," hn) ++ "," ++
                    (genericJoin "," . getBytes $ wport))
-toPortString _ = 
+toPortString _ =
     error "toPortString only works on AF_INET addresses"
 
 -- | Converts a port string to a socket address.  This is the inverse calculation of 'toPortString'.
@@ -245,15 +245,14 @@ respToSockAddr f =
                   Nothing -> fail ("Could not find remote endpoint in " ++ (show f))
                   Just (_, x, _, _) -> fromPortString x
 
-    
+
 parseDirName :: FTPResult -> Maybe String
 parseDirName (257, name:_) =
     let procq [] = []
         procq ('"':_) = []
         procq ('"' : '"' : xs) = '"' : procq xs
         procq (x:xs) = x : procq xs
-        in       
+        in
         if head name /= '"'
            then Nothing
            else Just (procq (tail name))
-
