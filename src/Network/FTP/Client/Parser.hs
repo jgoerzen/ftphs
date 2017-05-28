@@ -42,11 +42,15 @@ module Network.FTP.Client.Parser(parseReply, parseGoodReply,
                                          unexpectedresp, isxresp,
                                          forcexresp,
                                          forceioresp,
+                                         parseMlsdReply,
                                          parseDirName)
 where
 
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Utils
+import qualified Data.ByteString.Char8 as C
+import Control.Arrow
+import Data.Char (isSpace)
 import Data.List.Utils
 import Data.Bits.Utils
 import Data.String.Utils
@@ -256,3 +260,9 @@ parseDirName (257, name:_) =
         if head name /= '"'
            then Nothing
            else Just (procq (tail name))
+
+parseMlsdReply :: String -> (String, [(String, String)])
+parseMlsdReply l = (C.unpack filename, filter (not . null . fst) attrs)
+  where (attr, filename) = C.tail <$> C.break isSpace (C.pack l)
+        attrs            = ((fmap tail) . break (== '=') . C.unpack) <$> C.split ';' attr
+

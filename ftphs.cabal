@@ -47,6 +47,11 @@ Library
                hslogger, MissingH>=1.0.0, bytestring
   GHC-Options: -O2
 
+Executable example-mlsd
+  Main-Is: examples/mlsd.hs
+  build-depends: base
+  HS-Source-Dirs: src, .
+
 Executable runtests
   if flag(buildtests)
     Buildable: True

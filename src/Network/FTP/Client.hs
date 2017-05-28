@@ -204,7 +204,7 @@ module Network.FTP.Client(-- * Establishing\/Removing connections
                                    -- * Configuration
                                    setPassive, isPassive, enableFTPDebugging,
                                    -- * Directory listing
-                                   nlst, dir,
+                                   nlst, dir, mlsd,
                                    -- * File downloads
                                    getlines, getbinary,
                                    downloadbinary, downloadlargebinary,
@@ -489,6 +489,12 @@ nlst :: FTPConnection
         -> IO [String]
 nlst h Nothing        = retrlines h "NLST" >>= return . fst
 nlst h (Just dirname) = retrlines h ("NLST " ++ dirname) >>= return . fst
+
+{- | Retrieve a list of files and their attributes as defined by RFC3659. -}
+
+mlsd :: FTPConnection -> Maybe String -> IO [(String, [(String, String)])]
+mlsd h p = (fmap parseMlsdReply . fst) <$> retrlines h s
+  where s = "MLsd" ++ (maybe "" (++ " ") p)
 
 {- | Retrieve the system-specific long form of a directory list.
 
