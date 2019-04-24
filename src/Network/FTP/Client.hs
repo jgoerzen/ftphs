@@ -529,6 +529,19 @@ size h fn = do
             forceioresp 200 r
             return (read . head . snd $ r)
 
+-- | Get modification timestamp of a file on an FTP server.
+--
+-- This corresponds to a standard @MdTm@ command.
+--
+-- Beware that some servers might return local time instead of
+-- properly returning absolute 'UTCTime'.
+modificationTime :: FTP.FTPConnection -> FilePath -> IO UTCTime
+modificationTime conn path = do
+  r <- FTP.sendcmd conn ("MDTM " ++ path)
+  FTP.forceioresp 213 r
+  let timeStr = head . snd $ r
+  parseTimeM True defaultTimeLocale "%Y%m%d%H%M%S%Q" timeStr
+
 -- | Make new directory.  Returns the absolute name of the
 -- new directory if possible.
 mkdir :: FTPConnection -> String -> IO (Maybe String, FTPResult)
