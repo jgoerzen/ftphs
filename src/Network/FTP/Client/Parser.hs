@@ -45,17 +45,18 @@ module Network.FTP.Client.Parser(parseReply, parseGoodReply,
                                          parseDirName)
 where
 
-import Text.ParserCombinators.Parsec
-import Text.ParserCombinators.Parsec.Utils
-import Data.List.Utils
-import Data.Bits.Utils
-import Data.String.Utils
-import System.Log.Logger
-import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
-import System.IO(Handle, hGetContents)
-import System.IO.Unsafe
-import Text.Regex
-import Data.Word
+import           Data.Bits.Utils
+import           Data.List.Utils
+import           Data.String.Utils
+import           Data.Word
+import           Network.Socket
+import           System.IO.Unsafe
+import           System.Log.Logger
+import           Text.ParserCombinators.Parsec
+import           Text.ParserCombinators.Parsec.Utils
+import           Text.Regex
+
+
 type FTPResult = (Int, [String])
 
 -- import Control.Exception(Exception(PatternMatchFail), throw)
@@ -215,10 +216,10 @@ Example:
 toPortString :: SockAddr -> IO String
 toPortString (SockAddrInet port hostaddr) =
     let wport = (fromIntegral (port))::Word16
-        in do
-           hn <- inet_ntoa hostaddr
-           return ((replace "." "," hn) ++ "," ++
-                   (genericJoin "," . getBytes $ wport))
+        (h1, h2, h3, h4) = hostAddressToTuple hostaddr
+        in return . genericJoin "," $
+           map show [h1, h2, h3, h4] ++
+           map show (getBytes wport)
 toPortString _ =
     error "toPortString only works on AF_INET addresses"
 
@@ -226,11 +227,10 @@ toPortString _ =
 fromPortString :: String -> IO SockAddr
 fromPortString instr =
     let inbytes = split "," instr
-        hostname = join "." (take 4 inbytes)
+        [h1, h2, h3, h4] = map read (take 4 inbytes)
+        addr = tupleToHostAddress (h1, h2, h3, h4)
         portbytes = map read (drop 4 inbytes)
         in
-        do
-        addr <- inet_addr hostname
         return $ SockAddrInet (fromInteger $ fromBytes portbytes) addr
 
 respToSockAddrRe = mkRegex("([0-9]+,){5}[0-9]+")

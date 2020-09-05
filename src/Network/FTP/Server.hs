@@ -366,7 +366,7 @@ cmd_pasv h@(FTPServer _ _ state) args =
                     _ -> fail "Require IPv4 sockets"
        let ssopts = InetServerOptions
                     { listenQueueSize = 1,
-                      portNumber = aNY_PORT,
+                      portNumber = defaultPort,
                       interface = addr,
                       reuse = False,
                       family = AF_INET,

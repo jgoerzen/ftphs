@@ -224,15 +224,17 @@ where
 import           Control.Exception
 import           Data.ByteString           (hGet, hPut)
 import           Data.String.Utils
-import qualified Network
-import           Network.BSD
+import           Data.Time
 import           Network.FTP.Client.Parser
 import           Network.Socket
+import qualified Network.Socket            as Network
 import           Network.Utils
 import           System.IO
 import           System.IO.Binary
 import           System.IO.Unsafe
 import           System.Log.Logger
+
+
 data FTPConnection = FTPConnection {readh           :: IO String,
                                     writeh          :: Handle,
                                     socket_internal :: Socket,
@@ -329,7 +331,7 @@ makepasv h =
 {- | Opens a port and sends it to the remote. -}
 makeport :: FTPConnection -> IO (Socket, FTPResult)
 makeport h =
-    let listenaddr (SockAddrInet _ h) = SockAddrInet aNY_PORT h
+    let listenaddr (SockAddrInet _ h) = SockAddrInet defaultPort h
         listenaddr _ = error "FTP: Can't use port mode to non-TCP server"
         in
         do addr <- getSocketName (socket_internal h)
@@ -355,7 +357,7 @@ ntransfercmd h cmd =
                         forceioresp 100 r
                         return s)
                       ((\exc -> do
-                        sClose s
+                        close s
                         throw exc
                       ) :: IOError -> IO Socket)
                else do
@@ -363,7 +365,7 @@ ntransfercmd h cmd =
                     r <- sendcmd h cmd
                     forceioresp 100 r
                     acceptres <- accept (fst masterresult)
-                    sClose (fst masterresult)
+                    close (fst masterresult)
                     return (fst acceptres)
         in do
            s <- sock
@@ -535,10 +537,10 @@ size h fn = do
 --
 -- Beware that some servers might return local time instead of
 -- properly returning absolute 'UTCTime'.
-modificationTime :: FTP.FTPConnection -> FilePath -> IO UTCTime
+modificationTime :: FTPConnection -> FilePath -> IO UTCTime
 modificationTime conn path = do
-  r <- FTP.sendcmd conn ("MDTM " ++ path)
-  FTP.forceioresp 213 r
+  r <- sendcmd conn ("MDTM " ++ path)
+  forceioresp 213 r
   let timeStr = head . snd $ r
   parseTimeM True defaultTimeLocale "%Y%m%d%H%M%S%Q" timeStr
 
