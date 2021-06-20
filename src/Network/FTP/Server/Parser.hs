@@ -37,22 +37,11 @@ module Network.FTP.Server.Parser(
                                          parseCommand
                                         )
 where
-import Network.FTP.Client.Parser
-import Text.ParserCombinators.Parsec
-import Text.ParserCombinators.Parsec.Utils
-import Data.List.Utils
-import Data.Bits.Utils
-import Data.String.Utils
-import System.Log.Logger
-import Network.Socket(SockAddr(..), PortNumber(..), inet_addr, inet_ntoa)
-import System.IO(Handle, hGetContents)
-import System.IO(hGetLine)
-import Text.Regex
-import Data.Word
-import Data.Char
 
-logit :: String -> IO ()
-logit m = debugM "Network.FTP.Server.Parser" ("FTP received: " ++ m)
+import           Data.Char
+import           Data.String.Utils
+import           System.IO                     (Handle, hGetLine)
+import           Text.ParserCombinators.Parsec
 
 ----------------------------------------------------------------------
 -- Utilities
@@ -63,7 +52,7 @@ alpha = oneOf (['A'..'Z'] ++ ['a'..'z']) <?> "alphabetic character"
 word = many1 alpha
 
 args :: Parser String
-args = try (do char ' '
+args = try (do _ <- char ' '
                r <- many anyChar
                eof
                return r)
