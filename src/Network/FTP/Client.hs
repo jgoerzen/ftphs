@@ -222,7 +222,8 @@ module Network.FTP.Client(-- * Establishing\/Removing connections
                        )
 where
 import           Control.Exception
-import           Data.ByteString           (hGet, hPut)
+import           Data.ByteString           (hGet, hPut, ByteString)
+import qualified Data.ByteString as BS
 import           Data.String.Utils
 import           Data.Time
 import           Network.FTP.Client.Parser
@@ -418,25 +419,20 @@ retrlines h cmd =
 
 {- | Retrieves binary data from the remote. The string gives the command
 to issue. -}
-retrbinary :: FTPConnection -> String -> IO (String, FTPResult)
-retrbinary h cmd =
-    let foo h2 [] = do hClose h2
-                       r <- getresp h
-                       return ([], r)
-        foo h2 (x:xs) = do next <- unsafeInterleaveIO $ foo h2 xs
-                           return $ (x : fst next, snd next)
-        in do
-           sendcmd h "TYPE I"
-           newh <- transfercmd h cmd
-           c <- hGetContents newh
-           foo newh c
+retrbinary :: FTPConnection -> String -> IO (ByteString, FTPResult)
+retrbinary h cmd = do sendcmd h "TYPE I"
+                      newh <- transfercmd h cmd
+                      c <- BS.hGetContents newh
+                      hClose newh
+                      r <- getresp h
+                      pure (c, r)
 
 {- | Retrieves the specified file in text mode. -}
 getlines :: FTPConnection -> String -> IO ([String], FTPResult)
 getlines h fn = retrlines h ("RETR " ++ fn)
 
 {- | Retrieves the specified file in binary mode. -}
-getbinary :: FTPConnection -> String -> IO (String, FTPResult)
+getbinary :: FTPConnection -> String -> IO (ByteString, FTPResult)
 getbinary h fn = retrbinary h ("RETR " ++ fn)
 
 {- | Puts data in the specified file in text mode.  The first string
@@ -456,7 +452,7 @@ uploadbinary h fn = do input <- readBinaryFile fn
 {- | Downloads a file from remote and saves to disk in binary mode.  Note: filename is used for both local and remote. -}
 downloadbinary :: FTPConnection -> String -> IO FTPResult
 downloadbinary h fn = do (r0, r1) <- getbinary h fn
-                         writeBinaryFile fn r0
+                         BS.writeFile fn r0
                          return r1
 
 {- | Similar to downloadbinary, but downloads the file in blocks of 4096 bytes
